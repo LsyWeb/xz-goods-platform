@@ -1,12 +1,14 @@
 module.exports = {
   devServer:{
     proxy:{
-      '/api': {
+      '/goods': {
         target: 'http://49.232.130.31:8080',
-        pathRewrite: { '^/api': '' },
+        // pathRewrite: { '^/api': '' },
       },
       
     }
-  }
+  },
+  outputDir:"goods-client",
+  publicPath:"./"
   
 }

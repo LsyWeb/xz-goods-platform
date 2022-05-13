@@ -1,7 +1,6 @@
 <template>
- <van-notice-bar left-icon="volume-o" :text="notice" />
+  <van-notice-bar left-icon="volume-o" :text="notice" />
   <div class="home-container">
-   
     <h2>信工院急需物品采购平台</h2>
     <van-form class="form-container" @submit="onSubmit">
       <van-cell-group inset>
@@ -42,7 +41,7 @@
           label="姓名"
           placeholder="请填写姓名"
           required
-          :rules="[{ required: true, message: '请填写用户名' }]"
+          :rules="[{ required: true, message: '请填写姓名' }]"
         />
         <van-field
           v-model="formData.phone"
@@ -51,7 +50,10 @@
           label="手机号"
           placeholder="请填写手机号"
           required
-          :rules="[{ required: true, message: '请填写手机号' }]"
+          :rules="[
+            { required: true, message: '请填写手机号' },
+            { pattern: /^1\d{10}$/, message: '请填写正确的手机号' },
+          ]"
         />
         <van-field
           v-model="formData.goodsregion"
@@ -59,7 +61,7 @@
           label="类型"
           placeholder="请选择类型"
           required
-          :rules="[{ required: true, message: '请填写类型' }]"
+          :rules="[{ required: true, message: '请选择类型' }]"
         >
           <template #input>
             <van-radio-group
@@ -157,7 +159,7 @@
 <script>
 // @ is an alias to /src
 import { Toast } from "vant";
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { addGoods, upload } from "../api";
 export default {
@@ -211,9 +213,9 @@ export default {
       data.num = +form.num;
       delete data.images;
       // console.log(data);
-      Toast.loading("提交中");
+      Toast.loading({ message: "提交中...", forbidClick: true });
       const res = await addGoods(data);
-      if (res.data.success) {
+      if (res.data?.success) {
         Toast.success("提交成功");
         router.push("/result");
       } else {
@@ -234,9 +236,8 @@ export default {
       uploadformData.append("myfile", file.file);
 
       const res = await upload(uploadformData);
-      console.log(res);
 
-      if (res.data.success) {
+      if (res.data?.success) {
         formData.img = res.data.data.url;
         file.status = "success";
         Toast("上传成功");
@@ -246,8 +247,6 @@ export default {
         Toast("上传失败");
       }
     };
-
-    onMounted(() => {});
     return {
       notice,
       formData,
